@@ -468,6 +468,49 @@ section#services .span3:hover {
 	background:#e3e3e3;
 	box-shadow: 1px 1px 6px #C1BAC1;
 }
+/* Location */
+
+section#location {
+	padding-bottom: 9.5em;
+}
+#location h1 {
+	font-size: 3em;
+	margin-bottom: 1em;
+	margin-top: 0.5em;
+}
+section#location h2 {
+	font-size: 22px;
+	margin-bottom: 15px;
+	margin-top: 10px;
+	text-align:center;
+}
+section#location p {
+	margin:10px;
+}
+section#location .align {
+	text-align:center;
+	margin-top:10px;
+	font-size: 6em;
+}
+section#location .align .sev_icon {
+	text-align:center;
+	margin:10px 0 20px 0;
+	font-size: 0.6em;
+	color:#F0BF00;
+}
+section#location .span3 {
+	background:#e9e9e9;
+	padding: 20px 0;
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	-ms-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+}
+section#location .span3:hover {
+	background:#e3e3e3;
+	box-shadow: 1px 1px 6px #C1BAC1;
+}
 /* Testimonials */
 
 section#testimonials {

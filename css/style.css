@@ -696,6 +696,15 @@ section#agenda .align {
 	text-align: center;
 }
 
+/* Sponsors */
+section#sponsors{
+	background: url("../img/grey-cardboard-bg.png") repeat 0 0;
+}
+section#sponsors .align {
+	font-size: 6em;
+	text-align: center;
+}
+
 /* Contact Form */
 
 #theme-form {

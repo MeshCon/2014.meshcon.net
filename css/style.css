@@ -586,7 +586,7 @@ article .inside {
 	clear: right;
 }
 
-/* Sepaker */
+/* Speaker */
 section#speaker {
 	background: url("../img/grey-cardboard-bg.png") repeat 0 0;
 }
@@ -632,6 +632,27 @@ section#speaker .align {
 	font-family: 'Open Sans', sans-serif;
 	margin-bottom: .46155em;
 }
+
+/* wearit */
+
+section#wearit {
+	color: #e4e5e2;
+	background:#312A1E;
+}
+section#wearit .align {
+	font-size: 6em;
+	text-align: center;
+}
+#wearit h1 {
+	font-size: 3em;
+	margin-bottom: 1em;
+	margin-top: 0.5em;
+}
+#wearit {
+	padding-top: 4.75em;
+}
+
+
 
 /* Team and Contact */
 
@@ -704,6 +725,16 @@ section#sponsors .align {
 	font-size: 6em;
 	text-align: center;
 }
+
+/* Wear It */
+
+}
+section#wearit .align {
+	font-size: 6em;
+	text-align: center;
+}
+
+
 
 /* Contact Form */
 

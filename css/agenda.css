@@ -1,9 +1,9 @@
 .table_programa tr, .table_programa tr td {
     border: 3px solid #FFFFFF;
     color: #000000;
-    font-size: 11pt;
+    font-size: 13pt;
     padding: 15px;
-    text-align: center;
+    text-align: left;
 }
 .table_programa span {
     display: block;

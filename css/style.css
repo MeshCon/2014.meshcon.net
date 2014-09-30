@@ -1,4 +1,4 @@
-/*!
+./*!
  * LEGEND - Free Responsive One Page Template
  *
  * Copyright 2013
@@ -156,7 +156,7 @@ em {
  -1px -1px 0 rgba(0, 0, 0, 0.5), /* shadow */  1px 1px 0 rgba(255, 255, 255, 0.9); /* highlight */
 }
 .more-link {
-	font-size: .875em; /* 14px */
+	font-size: 1.4em; /* 15px */
 	margin-top: 1.5em;
 	font-family: 'Patua One', cursive;
 }

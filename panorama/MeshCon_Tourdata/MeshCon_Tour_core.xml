@@ -1,0 +1,638 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<krpano>
+  <!-- Global variables used by actions and plugins -->
+  <krpano 
+        tour_soundson="true" 
+        tour_soundsvolume="62" 
+        tour_autotourenabled="false"
+        tour_autorotateenabled="false"
+        tour_controlmodemousetype="moveto"
+        tour_fullscreen="false"
+        tour_displaymap="false"
+        tour_displaythumbnails="true"
+        tour_displayfloorplan="false"
+        tour_displayinfo="false"
+        tour_displayspots="true"
+        tour_displaycontrols="false"
+        tour_language="en"/>
+  <krpano tour_gyroscopedevices="true" devices="tablet|mobile" />
+  <krpano videos_sounds_path="%FIRSTXML%" devices="html5" />
+  <krpano videos_sounds_path="%SWFPATH%" devices="flash" />
+
+  <!-- Control Mode Management -->
+  <events name="controlmodenewpanoevent" onnewpano="controlmodenewpanoaction();" keep="true"/>
+  <action name="controlmodenewpanoaction">if (isdesktop, setControlMode(get(tour_controlmodemousetype)););</action>
+  <action name="setControlModeDragTo">setControlMode(drag2d);</action>
+  <action name="setControlModeMoveTo">setControlMode(moveto);</action>
+  <action name="setControlMode">
+    set(control.mousetype, %1);
+    set(tour_controlmodemousetype, %1);
+    events.dispatch(oncontrolmodechanged);
+  </action>
+
+  <!-- Tour Messages -->
+  <action name="getmessage">
+    txtadd(real_message_id, get(tour_language), "_", %2);
+    set(%1, get(data[get(real_message_id)].content));
+  </action>
+
+  <!-- Hide / Show Hotspots -->
+  <action name="hideHotspots">
+    set(tour_displayspots, false);
+    set(nb_spots, get(hotspot.count));
+    if (nb_spots != 0, hidepanospotsaction(); );
+    events.dispatch(hotspots_visibility_changed);
+  </action>
+  <action name="showHotspots">
+    set(tour_displayspots, true);
+    set(nb_spots, get(hotspot.count));
+    if (nb_spots != 0, showpanospotsaction(); );
+    events.dispatch(hotspots_visibility_changed);
+  </action>
+  <events name="hideShowHotspotsOnNewPanoEvent" onPanoStart="hideShowHotspotsOnNewPanoAction" keep="true"/>
+  <action name="hideShowHotspotsOnNewPanoAction">
+    set(nb_spots, get(hotspot.count));
+    if (nb_spots != 0,
+      if (tour_displayspots, showpanospotsaction(); , hidepanospotsaction(); );
+    );
+  </action>
+
+  <krpano tour_firststartactiondone="false" tour_firstlittleplanet="true"/>
+
+  <events name="startbehavioursevents" onxmlcomplete="startbehavioursxmlcompleteaction();" keep="true"/>
+  <action name="startbehavioursxmlcompleteaction">
+    ifnot (tour_firststartactiondone,
+
+      set(sceneisfull360, false);
+      sub(viewhfov, view.hlookatmax, view.hlookatmin);
+      if (viewhfov == 360,
+        sub(viewvfov, view.vlookatmax, view.vlookatmin);
+        if (viewvfov == 180,
+          set(sceneisfull360, true);
+        );
+      );
+      
+      
+      stoptween(view.fov);
+      stoptween(view.fovmax);
+      stoptween(view.vlookat);
+      stoptween(view.fisheye);
+      
+      if (sceneisfull360,
+	    setlittleplanet();
+      );
+
+
+
+    set(tour_firststartactiondone, true);
+
+    ,
+      events.dispatch(onPanoStart);
+    );
+  </action>
+
+  <action name="startLittlePlanetIntroEffect">
+    if(tour_firstlittleplanet,
+      set(sceneisfull360, false);
+      sub(viewhfov, view.hlookatmax, view.hlookatmin);
+      if (viewhfov == 360,
+        sub(viewvfov, view.vlookatmax, view.vlookatmin);
+        if (viewvfov == 180,
+          set(sceneisfull360, true);
+        );
+      );
+      if (sceneisfull360,
+        wait(0);
+        fromlittleplanetintrotonormalview();
+      );
+    );
+  </action>
+
+  <action name="setlittleplanet">
+    set(view.architectural, 0.0);
+    set(view.vlookat, 90);
+    set(view.pannini, false);
+    if(panoview.fovmax LE 150,
+      set(view.fovmax, 150);
+    ,
+      set(view.fovmax, get(panoview.fovmax));
+    );
+    set(view.stereographic, true);
+    set(view.fisheyefovlink, 1.5);
+    set(view.fisheye, 1.0);
+    set(view.fov, 150);
+    
+    
+    
+    events.dispatch(onStartLittlePlanetIntroduction);
+  </action>
+  <action name="fromlittleplanetintrotonormalview">
+	tweennormalview();
+  </action>
+  <action name="tweennormalview">
+    tween(view.fovmax, get(panoview.fovmax), 9, easeInOutQuad);
+    tween(view.vlookat, get(panoview.v), 9, easeInOutQuad);
+    if(panoview.fov LE view.fov, tween(view.fov, get(panoview.fov), 9, easeInOutQuad); );
+    tween(view.fisheye, 0.0, 9, easeInOutQuad, 
+      set(view.architectural, 0.0);
+      set(view.stereographic, false);
+      set(view.pannini, false);
+      set(view.fisheyefovlink, 0.5);
+      
+      
+      events.dispatch(onPanoStart);
+      events.dispatch(onEndLittlePlanetIntroduction);
+      if (tour_firstlittleplanet,
+        events.dispatch(onTourStart);
+        set(tour_firstlittleplanet, false);
+      );
+    );
+    
+    
+  </action>
+
+  <layer name="splashscreenlayer"
+         url="graphics/meshcon-tu_logo.png"
+         align="center"
+         onclick="hideintroimage();"
+         onloaded="autohideintroimage();"
+         zorder="99"
+         keep="true"/>
+  <action name="hideintroimage">
+    stopdelayedcall(hideintroimagecall);
+    tween(layer[splashscreenlayer].alpha, 0.0, 0.5, default,
+        removelayer(splashscreenlayer);
+        
+        set(sceneisfull360, false);
+        sub(viewhfov, view.hlookatmax, view.hlookatmin);
+        if (viewhfov == 360,
+          sub(viewvfov, view.vlookatmax, view.vlookatmin);
+          if (viewvfov == 180,
+            set(sceneisfull360, true);
+          );
+        );
+        if (sceneisfull360,
+          startLittlePlanetIntroEffect();
+        ,
+          events.dispatch(onPanoStart);
+          events.dispatch(onTourStart);
+        );
+    );
+  </action>
+  <action name="autohideintroimage">
+    set(layer[splashscreenlayer].alpha, 0);
+    tween(layer[splashscreenlayer].alpha, 1.0, WAIT);
+    delayedcall(hideintroimagecall, 7, hideintroimage() ); 
+  </action>
+
+
+
+  <action name="mainloadscene">
+    interruptAnimation();
+    resetbackgroundsoundifneeded(%1);
+    stop3DLocalSounds();
+    if (xml.scene != %1, loadscene(%1, NULL, MERGE, BLEND(1)); );
+  </action>
+
+  <!-- Load Previous Scene -->
+  <action name="loadPreviousScene">
+    if (%1 != findscene, sub(i, scene.count, 1));
+    copy(scenenamei, scene[get(i)].name);
+    dec(i);
+    if (scenenamei == xml.scene,
+      if (i GE 0,
+        mainloadscene(get(scene[get(i)].name));
+       ,
+        sub(lasti, scene.count, 1);
+        mainloadscene(get(scene[get(lasti)].name));
+      );
+     ,
+      if(i GE 0, loadPreviousScene(findscene));
+    );
+  </action>
+  <!-- Load Next Scene -->
+  <action name="loadNextScene">
+    if (%1 != findscene, set(i,0));
+    copy(scenenamei, scene[get(i)].name);
+    inc(i);
+    if (scenenamei == xml.scene,
+      if (i LT scene.count,
+        mainloadscene(get(scene[get(i)].name));
+       ,
+        mainloadscene(get(scene[0].name)); );
+     ,
+      if(i LT scene.count, loadNextScene(findscene));
+    );
+  </action>
+
+  <!-- AUTOROTATION -->
+  <autorotate enabled="false"/>
+  <krpano tour_autorotation_pausecounter="0"/>
+  <action name="startautorotation" >
+    set(tour_autorotateenabled, true );
+    set(autorotate.enabled, true);
+    set(tour_autorotation_pausecounter, 0);
+    events.dispatch(onstartautorotation);
+  </action>
+  <action name="stopautorotation"  >
+    set(tour_autorotateenabled, false);
+    set(autorotate.enabled, false);
+    events.dispatch(onstopautorotation);
+  </action>
+  <action name="pauseautorotation" >
+    if(tour_autorotateenabled,
+      set(autorotate.enabled, false);
+      inc(tour_autorotation_pausecounter);
+      events.dispatch(onpauseautorotation);
+    );
+  </action>
+  <action name="resumeautorotation">
+    if(tour_autorotateenabled,
+      if (tour_autorotation_pausecounter GT 0,
+        if(%1 == forceresume,
+          set(tour_autorotation_pausecounter, 0);
+         ,
+          dec(tour_autorotation_pausecounter);
+        );
+        if(tour_autorotation_pausecounter == 0,
+          set(autorotate.enabled, true);
+          events.dispatch(onresumeautorotation);
+        );
+      );
+    );
+  </action>
+  <events name="autorotation_events" onnewpano="resumeautorotation(forceresume);" keep="true"/>
+  <events name="autorotationstartevents" onTourStart="autorotationatstart();" keep="true"/>
+  <action name="autorotationatstart">
+    startautorotation();
+    set(events[autorotationstartevents].keep, false);
+  </action>
+
+  <!-- AUTOTOUR -->
+
+  <action name="startautotour">
+    set(tour_autotourenabled, true);startautorotation();
+    events.dispatch(onstartautotour);
+  </action>
+
+  <action name="stopautotour">
+    set(tour_autotourenabled, false);stopautorotation();
+    events.dispatch(onstopautotour);
+  </action>
+
+  <krpano tour_deeplinkingvars=""/>
+  <action name="computeDeepLinkingURL">
+    txtadd(tour_deeplinkingvars, "s=", get(xml.scene));
+    Math.round(viewhlookat, view.hlookat);
+    mod(viewhlookat, 360);
+    if (viewhlookat GT 180,
+      sub(viewhlookat, 360);
+     ,
+      if (viewhlookat LT -180, add(viewhlookat, 360));
+    );
+    Math.round(viewvlookat, view.vlookat);
+    Math.round(viewfov    , view.fov);
+    txtadd(tour_deeplinkingvars, get(tour_deeplinkingvars), "&amp;h=", get(viewhlookat));
+    txtadd(tour_deeplinkingvars, get(tour_deeplinkingvars), "&amp;v=", get(viewvlookat));
+    txtadd(tour_deeplinkingvars, get(tour_deeplinkingvars), "&amp;f=", get(viewfov));
+  </action>
+
+
+  <!-- Spot animation management -->
+  <action name="animate">
+    if (tour_stopsequence == false,
+      if (stopspotsequence == false,
+        inc(hotspot[%1].frame,1,get(hotspot[%1].lastframe),0);
+        mul(hotspot[%1].ypos,hotspot[%1].frame,hotspot[%1].frameheight);
+        txtadd(hotspot[%1].crop,'0|',get(hotspot[%1].ypos),'|',get(hotspot[%1].framewidth),'|',get(hotspot[%1].frameheight));
+        delayedcall(%2, animate(%1,%2) );
+      );
+    );
+  </action>
+  <action name="startspotanimation">
+    set(tour_stopsequence, false);
+    set(stopspotsequence , false);
+    animate(get(name)    , %1);
+  </action>
+  <action name="stopspotanimation">
+    set(stopspotsequence, true);
+    setdefaultanimatedspotframe();
+  </action>
+  <action name="setdefaultanimatedspotframe">
+    txtadd(defaultcrop, "0|0|", get(framewidth), "|", get(frameheight));
+    set(crop, get(defaultcrop));
+  </action>
+  <action name="interruptAnimation">
+    ifnot (tour_stopsequence === undefined,
+      set(tour_stopsequence, true);
+      wait(0.1);
+    );
+  </action>
+
+  <!-- Disable the default fullscreen mode as it does a fullscreen only on the viewer not "on the tour" -->
+  <contextmenu fullscreen="false" versioninfo="false"/>
+
+  <!-- Tooltips management -->
+<!-- Tooltip Management -->
+<krpano tooltipCurrentTextfieldLayer="panotourTooltipDefaultText" coretooltipmess=""/>
+
+<events name="showHideTooltipEvents" onremovepano="hideTooltip();" keep="true" />
+
+<action name="showTooltip">
+  if (tooltip !== null,
+	getmessage(currentTooltipText, get(tooltip));
+	
+	if (%2 == null,
+		set(tooltipCurrentTextfieldLayer, "panotourTooltipDefaultText");
+	,
+		if(%2 == "",
+			set(tooltipCurrentTextfieldLayer, "panotourTooltipDefaultText");
+		,
+			set(tooltipCurrentTextfieldLayer, %2);
+		);
+	);
+	
+	ifnot (currentTooltipText == "",
+		
+		
+		tooltipTextSettingsUpdate(%1, %3, %4);
+		
+		if(device.html5,
+			set(tooltipHtmlText, get(currentTooltipText));
+			escape(tooltipHtmlText);
+			
+			set(layer[get(tooltipCurrentTextfieldLayer)].html, get(tooltipHtmlText));
+
+			set(layer[get(tooltipCurrentTextfieldLayer)].visible, true);
+			
+			
+			div(halfWidth, layer[get(tooltipCurrentTextfieldLayer)].width, 2);
+			
+			
+			if(%1 != "center",
+				sub(leftMargin, get(mouse.x), get(halfWidth));
+				add(rightMargin, get(mouse.x), get(halfWidth));
+			,
+				set(leftMargin, 0);
+				set(rightMargin, 0);
+			);
+			
+			
+			indexoftxt(alignedOnRight, %1, right, 0);
+			indexoftxt(alignedOnLeft, %1, left, 0);
+			if(%3 == "right",
+				if(alignedOnRight != -1,
+					set(rightMargin, 0);
+				);
+			);
+			if(%3 == "left",
+				if(alignedOnLeft != -1,
+					set(leftMargin, 0);
+				);
+			);
+			
+			
+			set(totalHeight, get(layer[get(tooltipCurrentTextfieldLayer)].height));
+			
+			
+			if(%1 != "center",
+				sub(topMargin, get(mouse.y), get(totalHeight));
+				if(%3 == "top",
+					add(bottomMargin, get(mouse.y), get(totalHeight));
+				,
+					set(bottomMargin, get(mouse.y));
+				);
+			,
+				set(topMargin, 0);
+				set(bottomMargin, 0);
+			);
+			
+			
+			indexoftxt(alignedOnBottom, %1, bottom, 0);
+			indexoftxt(alignedOnTop, %1, top, 0);
+			if(%3 == "top",
+				if(alignedOnTop != -1,
+					set(topMargin, 0);
+				);
+			);
+			if(%3 == "bottom",
+				if(alignedOnBottom != -1,
+					set(bottomMargin, 0);
+				);
+			);
+			
+			if(leftMargin LT 0,
+				set(tooltipPositionX, get(halfWidth));
+				
+				
+				if(%1 == "hotspot",
+					if(topMargin LT 0,
+						set(layer[get(tooltipCurrentTextfieldLayer)].align, topleft);
+					,
+						if(bottomMargin GT stageheight,
+							set(layer[get(tooltipCurrentTextfieldLayer)].align, bottomleft);
+						,
+							set(layer[get(tooltipCurrentTextfieldLayer)].align, left);
+						);
+					);
+				);
+			,
+				if(rightMargin GT stagewidth,
+					sub(tooltipPositionX, get(stagewidth), get(halfWidth));
+					
+					
+					if(%1 == "hotspot",
+						if(topMargin LT 0,
+							set(layer[get(tooltipCurrentTextfieldLayer)].align, topright);
+						,
+							if(bottomMargin GT stageheight,
+								set(layer[get(tooltipCurrentTextfieldLayer)].align, bottomright);
+							,
+								set(layer[get(tooltipCurrentTextfieldLayer)].align, right);
+							);
+						);
+					);
+				,
+					if(alignedOnRight != -1,
+						sub(tooltipPositionX, stagewidth, get(mouse.x));
+					,
+						if(alignedOnLeft != -1,
+							set(tooltipPositionX, get(mouse.x));
+						,
+							div(tooltipPositionX, stagewidth, 2);
+							sub(tooltipPositionX, get(mouse.x), get(tooltipPositionX));
+						);
+					);
+				);
+			);
+			
+			
+			set(layer[get(tooltipCurrentTextfieldLayer)].x, get(tooltipPositionX));
+			
+			if(topMargin LT 0,
+				set(tooltipPositionY, get(totalHeight));
+				
+				
+				if(%1 == "hotspot",
+					if(leftMargin LT 0,
+						set(layer[get(tooltipCurrentTextfieldLayer)].align, topleft);
+					,
+						if(rightMargin GT stagewidth,
+							set(layer[get(tooltipCurrentTextfieldLayer)].align, topright);
+						,
+							set(layer[get(tooltipCurrentTextfieldLayer)].align, top);
+						);
+					);
+				);
+			,
+				if(bottomMargin GT stageheight,
+					sub(tooltipPositionY, get(stageheight), get(totalHeight));
+					
+					
+					if(%1 == "hotspot",
+						if(leftMargin LT 0,
+							set(layer[get(tooltipCurrentTextfieldLayer)].align, bottomleft);
+						,
+							if(rightMargin GT stagewidth,
+								set(layer[get(tooltipCurrentTextfieldLayer)].align, bottomright);
+							,
+								set(layer[get(tooltipCurrentTextfieldLayer)].align, bottom);
+							);
+						);
+					);
+				,
+					if(alignedOnBottom != -1,
+						sub(tooltipPositionY, stageheight, get(mouse.y));
+					,
+						if(alignedOnTop != -1,
+							set(tooltipPositionY, get(mouse.y));
+						,
+							div(tooltipPositionY, stageheight, 2);
+							sub(tooltipPositionY, get(mouse.y), get(tooltipPositionY));
+						);
+					);
+				);
+			);
+			
+			
+			set(layer[get(tooltipCurrentTextfieldLayer)].y, get(tooltipPositionY));
+		,
+			
+			indexoftxt(found, get(currentTooltipText), '[');
+			if(found GE 0,
+				subtxt(part1, get(currentTooltipText), 0, get(found));
+				add(found, 1);
+				subtxt(part2, get(currentTooltipText), get(found), get(currentTooltipText.length));
+				txtadd(currentTooltipText, get(part1), '[[', get(part2));
+			);
+			indexoftxt(found, get(currentTooltipText), ']');
+			if(found GE 0,
+				subtxt(part1, get(currentTooltipText), 0, get(found));
+				add(found, 1);
+				subtxt(part2, get(currentTooltipText), get(found), get(currentTooltipText.length));
+				txtadd(currentTooltipText, get(part1), ']]', get(part2));
+			);
+			escape(currentTooltipText);
+			ifnot (get(tooltipCurrentTextfieldLayer) == "",
+				showtext(get(currentTooltipText), get(tooltipCurrentTextfieldLayer));
+			,
+				showtext(get(currentTooltipText));
+			);
+		);
+	);
+  );
+</action>
+<action name="hideTooltip">
+	if(device.html5,
+			set(layer[get(tooltipCurrentTextfieldLayer)].visible, false);
+			set(layer[get(tooltipCurrentTextfieldLayer)].html, '');
+	,
+		showtext('');
+	);
+</action>
+
+<action name="tooltipTextSettingsUpdate">
+	if(get(tooltipCurrentTextfieldLayer) != "",
+	
+		
+		if (%1 == "hotspot",
+			set(layer[get(tooltipCurrentTextfieldLayer)].align, center);
+		,
+			set(layer[get(tooltipCurrentTextfieldLayer)].align, %1);
+		);
+		if (%3 == null,
+			set(layer[get(tooltipCurrentTextfieldLayer)].width, 200);
+		,
+			set(layer[get(tooltipCurrentTextfieldLayer)].width, %3);
+		);
+		if (%2 == null,
+			set(layer[get(tooltipCurrentTextfieldLayer)].edge, "bottom");
+		,
+			set(layer[get(tooltipCurrentTextfieldLayer)].edge, %2);
+		);
+		set(layer[get(tooltipCurrentTextfieldLayer)].zorder, 99);
+		
+		if (%2 == null,
+			set(textstyle[get(tooltipCurrentTextfieldLayer)].edge, "bottom");
+		,
+			set(textstyle[get(tooltipCurrentTextfieldLayer)].edge, %2);
+		);
+	
+	);
+</action>
+
+
+<!-- Default HTML5 tooltip style -->
+<layer name="panotourTooltipDefaultText"
+	keep="true"
+	enabled="false"
+	capture="false"
+	url="%FIRSTXML%/graphics/textfield.swf"
+	align="center"
+	background="false"
+	backgroundcolor="0xffffff"
+	border="false"
+	bordercolor="0xffffff"
+	textshadow="1" textshadowrange="6.0" textshadowangle="90" textshadowcolor="0x000000" textshadowalpha="1.0"
+	css="color:#ffffff;font-family:Arial;font-weight:bold;font-size:14px;text-align:center;"
+	width="200"
+	height="20"
+	autoheight="true"
+	edge="bottom"
+	selectable="false"
+	zorder="0"
+	xoffset="0" 
+	yoffset="0" 
+	visible="false"
+	html=""
+	devices="html5"
+/>
+<!-- Default Flash tooltip style -->
+<textstyle name="panotourTooltipDefaultText"
+	font="Arial"
+	fontsize="14.0"
+	bold="true"
+	italic="false"
+	background="false"
+	backgroundcolor="0xFFFFFF"
+	border="false"
+	bordercolor="0x000000"
+	textcolor="0xffffff"
+	alpha="1.0"
+	blendmode="normal"
+	origin="cursor"
+	edge="bottom"
+	textalign="left"
+    effect="dropshadow(0,45,0x000000,4,2);"
+	xoffset="0" 
+	yoffset="0" 
+	noclip="true"
+	devices="flash"
+/>
+
+  <!-- Keyboard management -->
+  <krpano tour_ctrlPressed="false"/>
+  <events name="zoomEvents" onkeydown="onKDZ" onkeyup="onKUZ" keep="true"/>
+  <action name="onKDZ">if(keycode==17,set(tour_ctrlPressed,true );,if(keycode==107,set(fov_moveforce,-1);,if(keycode==109,set(fov_moveforce,+1);,if(tour_ctrlPressed==true,if(keycode==96,lookto(get(panoview.h),get(panoview.v),get(panoview.fov)););););););</action>
+  <action name="onKUZ">if(keycode==17,set(tour_ctrlPressed,false);,if(keycode==107,set(fov_moveforce, 0);,if(keycode==109,set(fov_moveforce, 0););););</action>
+</krpano>

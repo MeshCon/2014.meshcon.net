@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<krpano>
+
+<!-- ************************ -->
+<!--         Messages         -->
+<!-- ************************ -->
+
+  <data name="en_project_title"><![CDATA[MeshCon2014]]></data>
+
+
+
+  <data name="en_pano20_title"><![CDATA[141011 TU MeshCon Pano]]></data>
+  <data name="en_spotpicture33_tooltip"><![CDATA[MeshCon2014]]></data>
+  <data name="en_spotpicture35_tooltip"><![CDATA[MeshCon2014]]></data>
+  <data name="en_spotpicture37_tooltip"><![CDATA[MeshCon2014]]></data>
+  <data name="en_spotpoint41_tooltip"><![CDATA[meshcon.net]]></data>
+  <data name="en_spotpoint41openurlwebsiteurl"><![CDATA[http://www.meshcon.net/]]></data>
+  <data name="en_spotpolygon43_tooltip"><![CDATA[Mozilla.de]]></data>
+  <data name="en_spotpolygon43openurlwebsiteurl"><![CDATA[https://www.mozilla.org/de/]]></data>
+  <data name="en_spotpolygon45_tooltip"><![CDATA[Mozilla.de]]></data>
+  <data name="en_spotpolygon45openurlwebsiteurl"><![CDATA[https://www.mozilla.org/de/]]></data>
+  <data name="en_spotpolygon46_tooltip"><![CDATA[Mozilla.de]]></data>
+  <data name="en_spotpolygon46openurlwebsiteurl"><![CDATA[https://www.mozilla.org/de/]]></data>
+  <data name="en_spotpolygon47_tooltip"><![CDATA[Mozilla.de]]></data>
+  <data name="en_spotpolygon47openurlwebsiteurl"><![CDATA[https://www.mozilla.org/de/]]></data>
+  <data name="en_spotpicture50_tooltip"><![CDATA[http://www.ibba.tu-berlin.de/]]></data>
+  <data name="en_spotpicture50openurlwebsiteurl"><![CDATA[http://www.ibba.tu-berlin.de/]]></data>
+  <data name="en_spotpicture58_tooltip"><![CDATA[Agenda 2014]]></data>
+  <data name="en_spotpicture60_tooltip"><![CDATA[MeshCon.net]]></data>
+  <data name="en_spotpicture60openurlwebsiteurl"><![CDATA[http://meshcon.net/]]></data>
+
+
+
+
+
+
+  <data name="en_contextmenuopenwebsitelabel1"><![CDATA[www.meshcon.net]]></data>
+  <data name="en_contextmenuwebsiteurl1"><![CDATA[http://meshcon.net/]]></data>
+  <data name="en_contextmenuopenwebsitelabel2"><![CDATA[www.ibba.tu-berlin.de]]></data>
+  <data name="en_contextmenuwebsiteurl2"><![CDATA[http://www.ibba.tu-berlin.de/]]></data>
+  <data name="en_contextmenuopenwebsitelabel3"><![CDATA[www.mozilla.org/en-US/contact/spaces/berlin/]]></data>
+  <data name="en_contextmenuwebsiteurl3"><![CDATA[https://www.mozilla.org/en-US/contact/spaces/berlin/]]></data>
+  <data name="en_contextmenuopenFsLabel"><![CDATA[Enter Fullscreen]]></data>
+  <data name="en_contextmenucloseFsLabel"><![CDATA[Exit Fullscreen]]></data>
+  <data name="en_contextmenunormallabel"><![CDATA[Normalsicht]]></data>
+  <data name="en_contextmenufisheyelabel"><![CDATA[Fischaugenansicht]]></data>
+  <data name="en_contextmenuarchitecturallabel"><![CDATA[architektonische Sicht]]></data>
+  <data name="en_contextmenustereographiclabel"><![CDATA[stereographische Sichr]]></data>
+  <data name="en_contextmenupanninilabel"><![CDATA[Pannini Sicht]]></data>
+  <data name="en_contextmenulittleplanetlabel"><![CDATA[Little Planet Sicht]]></data>
+  <data name="en_contextmenufisheyeballlabel"><![CDATA[Fischauge Kugel Ansicht]]></data>
+  <data name="en_controlBar_dpadzoomInTip"><![CDATA[Vergrößern]]></data>
+  <data name="en_controlBar_dpadzoomOutTip"><![CDATA[Verkleinern]]></data>
+  <data name="en_controlBar_dpadmoveLeftTip"><![CDATA[Move left]]></data>
+  <data name="en_controlBar_dpadmoveRightTip"><![CDATA[Move right]]></data>
+  <data name="en_controlBar_dpadmoveUpTip"><![CDATA[Oben]]></data>
+  <data name="en_controlBar_dpadmoveDownTip"><![CDATA[Unten]]></data>
+  <data name="en_controlBar_dpadopenFsTip"><![CDATA[Vollbild]]></data>
+  <data name="en_controlBar_dpadcloseFsTip"><![CDATA[Vollbild verlassen]]></data>
+  <data name="en_controlBar_dpadautorotateOnTip"><![CDATA[Autorotation starten]]></data>
+  <data name="en_controlBar_dpadautorotateOffTip"><![CDATA[Autorotation stoppen]]></data>
+  <data name="en_controlBar_dpaddisplayHelpTip"><![CDATA[Hilfe zeigen]]></data>
+  <data name="en_controlBar_dpadhideHelpTip"><![CDATA[Hilfe verstecken]]></data>
+  <data name="en_controlBar_dpaddisplayControlsTip"><![CDATA[Steuerung]]></data>
+  <data name="en_controlBar_dpadhideControlsTip"><![CDATA[Steuerung verstecken]]></data>
+  <data name="en_controlBar_dpadctrlmodeDragTip"><![CDATA[Change control mode]]></data>
+  <data name="en_controlBar_dpadctrlmodeMoveTip"><![CDATA[Change control mode]]></data>
+
+
+
+</krpano>
